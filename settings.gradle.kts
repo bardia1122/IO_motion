@@ -23,4 +23,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "IO_motion"
 include(":app")
- 
+include(":core-common")
+include(":core-analysis")
+include(":core-pose")
+include(":core-ui")
+include(":data")
+include(":core-export")
+include(":feature-live")
+include(":feature-video")
+include(":feature-history")
