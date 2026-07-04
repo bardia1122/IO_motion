@@ -1,6 +1,7 @@
 package com.example.io_motion.feature.video
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -94,7 +95,7 @@ fun VideoScreen(
                 is VideoUiState.Idle -> IdleContent(
                     exerciseType = initialExerciseType,
                     modelVariant = initialModelVariant,
-                    onPickVideo = { videoPicker.launch(PickVisualMedia.VideoOnly) },
+                    onPickVideo = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
                     onNavigateBack = onNavigateBack,
                 )
                 is VideoUiState.Processing -> ProcessingContent(
