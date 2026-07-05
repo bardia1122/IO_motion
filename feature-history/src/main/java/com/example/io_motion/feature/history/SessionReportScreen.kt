@@ -10,20 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +46,7 @@ import com.example.io_motion.core.ui.components.RepCard
 import com.example.io_motion.core.ui.components.RepMetricsGrid
 import com.example.io_motion.data.model.SessionRecord
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionReportScreen(
     sessionId: Long,
@@ -66,19 +70,36 @@ fun SessionReportScreen(
         }
     }
 
-    Surface(modifier = modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = uiState.record?.metrics?.exerciseType?.displayName() ?: "Session Report",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
         when {
-            uiState.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            uiState.isLoading -> Box(Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            uiState.record == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            uiState.record == null -> Box(Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                 Text("Session not found.")
             }
             else -> ReportContent(
                 record = uiState.record!!,
-                onNavigateBack = onNavigateBack,
                 onExportJson = viewModel::exportJson,
                 onExportCsv = viewModel::exportCsv,
+                modifier = Modifier.padding(innerPadding),
             )
         }
     }
@@ -87,44 +108,25 @@ fun SessionReportScreen(
 @Composable
 private fun ReportContent(
     record: SessionRecord,
-    onNavigateBack: () -> Unit,
     onExportJson: () -> Unit,
     onExportCsv: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val metrics = record.metrics
     val isPlank = metrics.exerciseType == ExerciseType.PLANK
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 32.dp),
     ) {
-        // ── Header ────────────────────────────────────────────────────────────
+        // ── Metadata ──────────────────────────────────────────────────────────
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, end = 16.dp, top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = onNavigateBack) {
-                    Text("← Back", style = MaterialTheme.typography.labelLarge)
-                }
-                Spacer(Modifier.weight(1f))
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = metrics.exerciseType.displayName(),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    )
-                    Text(
-                        text = record.recordedAt.toDateString(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
-                    )
-                }
-            }
+            Text(
+                text = record.recordedAt.toDateString(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+            )
         }
 
         // ── Metadata badges ───────────────────────────────────────────────────
@@ -212,7 +214,7 @@ private fun ReportContent(
 private fun SmallBadge(text: String) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(6.dp),
+        shape = MaterialTheme.shapes.extraSmall,
     ) {
         Text(
             text = text,

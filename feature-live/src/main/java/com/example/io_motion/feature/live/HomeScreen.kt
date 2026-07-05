@@ -1,5 +1,6 @@
 package com.example.io_motion.feature.live
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,16 +11,24 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.example.io_motion.core.common.models.AnalysisMode
 import com.example.io_motion.core.common.models.ExerciseType
 import com.example.io_motion.core.common.models.ThemeMode
-import com.example.io_motion.core.common.models.displayName
 import com.example.io_motion.core.pose.model.PoseModelVariant
 
 @Composable
@@ -50,8 +58,10 @@ fun HomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(horizontal = 24.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Row(
@@ -71,11 +81,16 @@ fun HomeScreen(
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onCycleTheme) {
-                    Text(themeMode.displayName(), style = MaterialTheme.typography.labelLarge)
+                IconButton(onClick = onCycleTheme) {
+                    val (icon, description) = when (themeMode) {
+                        ThemeMode.LIGHT  -> Icons.Filled.LightMode to "Theme: Light"
+                        ThemeMode.DARK   -> Icons.Filled.DarkMode to "Theme: Dark"
+                        ThemeMode.SYSTEM -> Icons.Filled.BrightnessAuto to "Theme: Auto"
+                    }
+                    Icon(imageVector = icon, contentDescription = "$description — tap to change")
                 }
-                TextButton(onClick = onOpenHistory) {
-                    Text("History", style = MaterialTheme.typography.labelLarge)
+                IconButton(onClick = onOpenHistory) {
+                    Icon(imageVector = Icons.Filled.History, contentDescription = "Session history")
                 }
             }
         }
@@ -155,8 +170,9 @@ private fun ExerciseCard(
 ) {
     Surface(
         modifier = modifier.aspectRatio(1.5f).clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+        shape = MaterialTheme.shapes.medium,
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+        border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
