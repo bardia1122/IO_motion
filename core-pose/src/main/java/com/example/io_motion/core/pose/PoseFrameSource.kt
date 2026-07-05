@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Combines CameraX and [PoseLandmarkerHelper] into a single observable data source.
@@ -34,7 +35,15 @@ import javax.inject.Inject
  *
  * All inference runs on a dedicated single-thread executor. Results are emitted on that thread
  * and delivered to [frames] — downstream collectors receive them on whatever dispatcher they use.
+ *
+ * [Singleton]-scoped (matching [VideoAnalysisSession]) so [analysisExecutor] is created once for
+ * the app's lifetime rather than once per injection site — this class was previously unscoped,
+ * so each `LiveViewModel` (itself created fresh per nav back-stack entry) got its own instance
+ * and leaked a never-shut-down executor thread every time the user revisited the Live screen.
+ * [bindCamera]/[unbindCamera] already tear down and rebind camera state defensively, so reusing
+ * one instance across visits is safe.
  */
+@Singleton
 class PoseFrameSource @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {

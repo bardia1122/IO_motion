@@ -3,6 +3,7 @@ package com.example.io_motion.feature.live
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.io_motion.core.analysis.ExerciseAnalyzer
@@ -10,6 +11,7 @@ import com.example.io_motion.core.analysis.ExerciseAnalyzerFactory
 import com.example.io_motion.core.analysis.model.AnalyzerState
 import com.example.io_motion.core.common.models.AnalysisMode
 import com.example.io_motion.core.common.models.ExerciseType
+import com.example.io_motion.core.common.util.parseEnumOrDefault
 import com.example.io_motion.core.pose.PoseFrameSource
 import com.example.io_motion.core.pose.config.PoseLandmarkerConfig
 import com.example.io_motion.core.pose.model.PoseError
@@ -29,13 +31,23 @@ import javax.inject.Inject
 class LiveViewModel @Inject constructor(
     private val poseFrameSource: PoseFrameSource,
     private val sessionRepository: SessionRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(LiveUiState())
+    // Read directly from the nav backstack's SavedStateHandle rather than via a separate
+    // initialize() call from the composable: that pattern left this ViewModel briefly in its
+    // default state, and LiveScreen's AndroidView factory (which reads uiState.modelVariant in
+    // bindCamera) could run before a LaunchedEffect-driven initialize() call had landed, binding
+    // the wrong model variant. Reading here means uiState is correct from construction.
+    private val _uiState = MutableStateFlow(
+        LiveUiState(
+            exerciseType = parseEnumOrDefault(savedStateHandle["exerciseType"], ExerciseType.SQUAT),
+            modelVariant = parseEnumOrDefault(savedStateHandle["modelVariant"], PoseModelVariant.FULL),
+        )
+    )
     val uiState: StateFlow<LiveUiState> = _uiState.asStateFlow()
 
     private var analyzer: ExerciseAnalyzer? = null
-    private var initialized = false
 
     init {
         viewModelScope.launch {
@@ -44,12 +56,6 @@ class LiveViewModel @Inject constructor(
         viewModelScope.launch {
             poseFrameSource.errors.collect { error -> onPoseError(error) }
         }
-    }
-
-    fun initialize(exerciseType: ExerciseType, modelVariant: PoseModelVariant) {
-        if (initialized) return
-        initialized = true
-        _uiState.update { it.copy(exerciseType = exerciseType, modelVariant = modelVariant) }
     }
 
     fun bindCamera(lifecycleOwner: LifecycleOwner, surfaceProvider: Preview.SurfaceProvider?) {
