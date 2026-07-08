@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.History
@@ -56,6 +57,7 @@ fun HomeScreen(
     onOpenHistory: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateBack: (() -> Unit)? = null,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     var selectedExercise by remember { mutableStateOf(ExerciseType.SQUAT) }
@@ -78,16 +80,34 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column {
-                Row {
-                    Text(text = "IO", style = IOMotionTextStyles.wordmark, color = accent)
-                    Text(text = "Motion", style = IOMotionTextStyles.wordmark, color = MaterialTheme.colorScheme.onBackground)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (onNavigateBack != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = onNavigateBack),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text(
-                    text = "AI FITNESS ASSESSMENT",
-                    style = IOMotionTextStyles.subtitle,
-                    color = MaterialTheme.extendedColors.textMuted,
-                )
+                Column {
+                    Row {
+                        Text(text = "IO", style = IOMotionTextStyles.wordmark, color = accent)
+                        Text(text = "Motion", style = IOMotionTextStyles.wordmark, color = MaterialTheme.colorScheme.onBackground)
+                    }
+                    Text(
+                        text = "AI FITNESS ASSESSMENT",
+                        style = IOMotionTextStyles.subtitle,
+                        color = MaterialTheme.extendedColors.textMuted,
+                    )
+                }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(

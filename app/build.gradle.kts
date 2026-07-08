@@ -33,6 +33,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // java.time (used by :core-common hub stats) must be desugared for minSdk 24 (< API 26).
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -56,10 +58,13 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     implementation(project(":core-common"))
     implementation(project(":core-pose"))
     implementation(project(":core-ui"))
     implementation(project(":data"))
+    implementation(project(":feature-home"))
     implementation(project(":feature-live"))
     implementation(project(":feature-video"))
     implementation(project(":feature-history"))

@@ -10,4 +10,11 @@ data class SessionRecord(
     val analysisMode: AnalysisMode,
     val modelVariant: String,
     val metrics: SessionMetrics,
-)
+) {
+    /**
+     * Session quality score (0–100), surfaced directly so consumers that only need the number
+     * (e.g. the Home hub stats) don't have to depend on `:core-analysis` for the [SessionMetrics]
+     * type.
+     */
+    val qualityScore: Int get() = metrics.sessionQualityScore
+}

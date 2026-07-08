@@ -1,7 +1,15 @@
 package com.example.io_motion.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,18 +22,22 @@ import com.example.io_motion.core.common.util.parseEnumOrDefault
 import com.example.io_motion.core.pose.model.PoseModelVariant
 import com.example.io_motion.feature.history.HistoryScreen
 import com.example.io_motion.feature.history.SessionReportScreen
+import com.example.io_motion.feature.home.HomeHubScreen
 import com.example.io_motion.feature.live.HomeScreen
 import com.example.io_motion.feature.live.LiveScreen
 import com.example.io_motion.feature.live.settings.SettingsScreen
 import com.example.io_motion.feature.video.VideoScreen
 
 private object Routes {
-    const val HOME     = "home"
-    const val LIVE     = "live/{exerciseType}/{modelVariant}"
-    const val VIDEO    = "video/{exerciseType}/{modelVariant}"
-    const val HISTORY  = "history"
-    const val REPORT   = "report/{sessionId}"
-    const val SETTINGS = "settings"
+    const val HOME       = "home"        // new hub (start destination)
+    const val ASSESSMENT = "assessment"  // the former "home" exercise-picker (Motion Assessment setup)
+    const val LIVE       = "live/{exerciseType}/{modelVariant}"
+    const val VIDEO      = "video/{exerciseType}/{modelVariant}"
+    const val HISTORY    = "history"
+    const val REPORT     = "report/{sessionId}"
+    const val SETTINGS   = "settings"
+    const val WORKOUTS   = "workouts"    // :feature-workout (Phase 4)
+    const val DIET       = "diet"        // :feature-diet (Phase 6)
 
     fun live(exerciseType: ExerciseType, modelVariant: PoseModelVariant) =
         "live/${exerciseType.name}/${modelVariant.name}"
@@ -47,6 +59,15 @@ fun AppNavHost(
         modifier = modifier,
     ) {
         composable(Routes.HOME) {
+            HomeHubScreen(
+                onOpenAssessment = { navController.navigate(Routes.ASSESSMENT) },
+                onOpenWorkouts = { navController.navigate(Routes.WORKOUTS) },
+                onOpenDiet = { navController.navigate(Routes.DIET) },
+                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+            )
+        }
+
+        composable(Routes.ASSESSMENT) {
             HomeScreen(
                 onStart = { exercise, model, mode ->
                     when (mode) {
@@ -56,6 +77,7 @@ fun AppNavHost(
                 },
                 onOpenHistory = { navController.navigate(Routes.HISTORY) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -115,5 +137,26 @@ fun AppNavHost(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
+
+        // Placeholders replaced by :feature-workout (Phase 4) and :feature-diet (Phase 6). They
+        // exist now so the hub's feature rows navigate and back-pop correctly during review.
+        composable(Routes.WORKOUTS) {
+            ComingSoonScreen(title = "Create Your Workout")
+        }
+        composable(Routes.DIET) {
+            ComingSoonScreen(title = "Diet Planning")
+        }
+    }
+}
+
+@Composable
+private fun ComingSoonScreen(title: String) {
+    Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
+        Text(
+            text = "$title\ncoming soon",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
     }
 }
