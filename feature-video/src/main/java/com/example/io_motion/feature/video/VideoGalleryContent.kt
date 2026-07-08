@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Movie
@@ -40,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -122,7 +122,7 @@ private fun VideoThumbnailTile(video: DeviceVideo, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RectangleShape)
             .background(Color(0xFF1A1A1A))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.BottomEnd,
@@ -144,7 +144,7 @@ private fun VideoThumbnailTile(video: DeviceVideo, onClick: () -> Unit) {
         }
         Surface(
             color = Color.Black.copy(alpha = 0.6f),
-            shape = RoundedCornerShape(topStart = 6.dp),
+            shape = RectangleShape,
             modifier = Modifier.padding(2.dp),
         ) {
             Text(

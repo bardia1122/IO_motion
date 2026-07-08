@@ -48,7 +48,7 @@ class SettingsPreferences @Inject constructor(
     override val accentTheme = dataStore.data.map { prefs ->
         prefs[ACCENT_THEME_KEY]?.let { name ->
             runCatching { AccentTheme.valueOf(name) }.getOrNull()
-        } ?: AccentTheme.BLUE
+        } ?: AccentTheme.ORANGE
     }
 
     override suspend fun setAccentTheme(accent: AccentTheme) {

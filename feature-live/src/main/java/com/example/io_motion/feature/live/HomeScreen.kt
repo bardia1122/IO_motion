@@ -39,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.io_motion.core.common.models.AnalysisMode
@@ -48,10 +47,7 @@ import com.example.io_motion.core.common.models.displayName
 import com.example.io_motion.core.pose.model.PoseModelVariant
 import com.example.io_motion.core.ui.components.SectionLabel
 import com.example.io_motion.core.ui.components.SegmentedControl
-import com.example.io_motion.core.ui.theme.CutCorner
 import com.example.io_motion.core.ui.theme.IOMotionTextStyles
-import com.example.io_motion.core.ui.theme.LocalCutCornerEnabled
-import com.example.io_motion.core.ui.theme.cutCornerShape
 import com.example.io_motion.core.ui.theme.extendedColors
 
 @Composable
@@ -65,7 +61,6 @@ fun HomeScreen(
     var selectedExercise by remember { mutableStateOf(ExerciseType.SQUAT) }
     var selectedMode by remember { mutableStateOf(AnalysisMode.LIVE) }
     val modelVariant by viewModel.modelVariant.collectAsState()
-    val cutCornerEnabled = LocalCutCornerEnabled.current
     val accent = MaterialTheme.colorScheme.primary
 
     Column(
@@ -83,7 +78,7 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(modifier = Modifier.graphicsLayer { rotationZ = -4f }) {
+            Column {
                 Row {
                     Text(text = "IO", style = IOMotionTextStyles.wordmark, color = accent)
                     Text(text = "Motion", style = IOMotionTextStyles.wordmark, color = MaterialTheme.colorScheme.onBackground)
@@ -125,7 +120,6 @@ fun HomeScreen(
             exercises = ExerciseType.entries,
             selected = selectedExercise,
             onSelect = { selectedExercise = it },
-            cutCornerEnabled = cutCornerEnabled,
         )
 
         Spacer(modifier = Modifier.height(28.dp))
@@ -146,7 +140,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(58.dp)
-                .background(accent, cutCornerShape(CutCorner.ctaButton, cutCornerEnabled))
+                .background(accent)
                 .clickable { onStart(selectedExercise, modelVariant, selectedMode) },
             contentAlignment = Alignment.Center,
         ) {
@@ -180,7 +174,6 @@ private fun ExerciseList(
     exercises: List<ExerciseType>,
     selected: ExerciseType,
     onSelect: (ExerciseType) -> Unit,
-    cutCornerEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val rowHeight = 64.dp
@@ -198,7 +191,7 @@ private fun ExerciseList(
                 .fillMaxWidth()
                 .height(rowHeight)
                 .offset(y = indicatorOffset)
-                .background(accent, cutCornerShape(CutCorner.selectedRow, cutCornerEnabled)),
+                .background(accent),
         )
         Column {
             exercises.forEachIndexed { index, exercise ->
