@@ -63,6 +63,9 @@ object IOMotionTextStyles {
 
     val exerciseRowName = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.W700, fontSize = 21.sp)
 
+    // Bordered-card / list-row title (workout cards, suggested-meal cards): Poppins 700 16sp.
+    val cardTitle = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.W700, fontSize = 16.sp)
+
     val segmentedLabel = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.W700, fontSize = 13.sp)
     val modelVariantCaption = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.W400, fontSize = 12.sp)
 

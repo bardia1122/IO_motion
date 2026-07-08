@@ -65,6 +65,8 @@ abstract class DataModule {
                 // No destructive fallback: session history must survive schema bumps. Every
                 // version increase ships an explicit Migration registered here (see MIGRATION_1_2).
                 .addMigrations(MIGRATION_1_2)
+                // Debug-only demo data, seeded once on database creation; never in release.
+                .apply { if (BuildConfig.DEBUG) addCallback(DebugSeedCallback()) }
                 .build()
 
         @Provides

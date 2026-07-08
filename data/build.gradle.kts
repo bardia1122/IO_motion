@@ -22,6 +22,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        // BuildConfig.DEBUG gates the debug-only demo seeder (DebugSeedCallback).
+        buildConfig = true
+    }
 
     // Exposes the exported Room schemas to MigrationTestHelper (it reads them from androidTest assets).
     sourceSets {

@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature-home" />
             <option value="$PROJECT_DIR$/feature-live" />
             <option value="$PROJECT_DIR$/feature-video" />
+            <option value="$PROJECT_DIR$/feature-workout" />
           </set>
         </option>
       </GradleProjectSettings>

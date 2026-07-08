@@ -23,6 +23,9 @@ import com.example.io_motion.core.pose.model.PoseModelVariant
 import com.example.io_motion.feature.history.HistoryScreen
 import com.example.io_motion.feature.history.SessionReportScreen
 import com.example.io_motion.feature.home.HomeHubScreen
+import com.example.io_motion.feature.workout.builder.WorkoutBuilderScreen
+import com.example.io_motion.feature.workout.builder.WorkoutBuilderViewModel
+import com.example.io_motion.feature.workout.list.WorkoutListScreen
 import com.example.io_motion.feature.live.HomeScreen
 import com.example.io_motion.feature.live.LiveScreen
 import com.example.io_motion.feature.live.settings.SettingsScreen
@@ -36,8 +39,10 @@ private object Routes {
     const val HISTORY    = "history"
     const val REPORT     = "report/{sessionId}"
     const val SETTINGS   = "settings"
-    const val WORKOUTS   = "workouts"    // :feature-workout (Phase 4)
-    const val DIET       = "diet"        // :feature-diet (Phase 6)
+    const val WORKOUTS        = "workouts"
+    const val WORKOUT_BUILDER = "workout-builder?workoutId={workoutId}"
+    const val WORKOUT_RUN     = "workout-run/{workoutId}"   // guided runner (Phase 5)
+    const val DIET            = "diet"                       // :feature-diet (Phase 6)
 
     fun live(exerciseType: ExerciseType, modelVariant: PoseModelVariant) =
         "live/${exerciseType.name}/${modelVariant.name}"
@@ -46,6 +51,11 @@ private object Routes {
         "video/${exerciseType.name}/${modelVariant.name}"
 
     fun report(sessionId: Long) = "report/$sessionId"
+
+    fun workoutBuilder(workoutId: Long? = null) =
+        if (workoutId == null) "workout-builder" else "workout-builder?workoutId=$workoutId"
+
+    fun workoutRun(workoutId: Long) = "workout-run/$workoutId"
 }
 
 @Composable
@@ -138,10 +148,33 @@ fun AppNavHost(
             )
         }
 
-        // Placeholders replaced by :feature-workout (Phase 4) and :feature-diet (Phase 6). They
-        // exist now so the hub's feature rows navigate and back-pop correctly during review.
         composable(Routes.WORKOUTS) {
-            ComingSoonScreen(title = "Create Your Workout")
+            WorkoutListScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNewWorkout = { navController.navigate(Routes.workoutBuilder()) },
+                onEditWorkout = { id -> navController.navigate(Routes.workoutBuilder(id)) },
+                onStartRun = { id -> navController.navigate(Routes.workoutRun(id)) },
+            )
+        }
+
+        composable(
+            route = Routes.WORKOUT_BUILDER,
+            arguments = listOf(
+                navArgument(WorkoutBuilderViewModel.ARG_WORKOUT_ID) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                },
+            ),
+        ) {
+            WorkoutBuilderScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        // Placeholder replaced by the guided runner (Phase 5) and :feature-diet (Phase 6).
+        composable(
+            route = Routes.WORKOUT_RUN,
+            arguments = listOf(navArgument("workoutId") { type = NavType.LongType }),
+        ) {
+            ComingSoonScreen(title = "Guided Run")
         }
         composable(Routes.DIET) {
             ComingSoonScreen(title = "Diet Planning")
