@@ -1,7 +1,6 @@
 package com.example.io_motion.core.ui.theme
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -12,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
@@ -78,18 +78,26 @@ private fun darkColorSchemeFor(accent: Color, accentOn: Color): ColorScheme = da
     onErrorContainer = TextPrimaryDark,
 )
 
+// Square-corner geometry app-wide (design §3): every M3 shape slot resolves to a plain rectangle,
+// so all `MaterialTheme.shapes.*` consumers (cards, badges, dialogs, sheets) render square. The
+// design's rounded exceptions — 48×48dp icon tiles and the 42×42dp gear (12dp radius) and circular
+// accent swatches — are drawn with explicit shapes at their call sites, not these slots.
+// M3 shape slots require a CornerBasedShape, so square corners are RoundedCornerShape(0.dp)
+// (not RectangleShape, which is a plain Shape).
+private val SquareShape = RoundedCornerShape(0.dp)
+
 val IOMotionShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(12.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(28.dp),
+    extraSmall = SquareShape,
+    small = SquareShape,
+    medium = SquareShape,
+    large = SquareShape,
+    extraLarge = SquareShape,
 )
 
 @Composable
 fun IO_motionTheme(
     themeMode: ThemeMode = ThemeMode.DARK,
-    accentTheme: AccentTheme = AccentTheme.BLUE,
+    accentTheme: AccentTheme = AccentTheme.ORANGE,
     content: @Composable () -> Unit,
 ) {
     val darkTheme = themeMode == ThemeMode.DARK

@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(
     val accentTheme: StateFlow<AccentTheme> = settingsRepository.accentTheme.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = AccentTheme.BLUE,
+        initialValue = AccentTheme.ORANGE,
     )
 
     /** Called when the app is backgrounded (MainActivity onStop) — see SettingsRepository kdoc for why. */

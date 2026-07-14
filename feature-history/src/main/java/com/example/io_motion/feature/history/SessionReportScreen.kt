@@ -42,10 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.io_motion.core.common.models.ExerciseType
 import com.example.io_motion.core.common.models.displayName
 import com.example.io_motion.core.common.models.metaLabel
-import com.example.io_motion.core.ui.theme.CutCorner
 import com.example.io_motion.core.ui.theme.IOMotionTextStyles
-import com.example.io_motion.core.ui.theme.LocalCutCornerEnabled
-import com.example.io_motion.core.ui.theme.cutCornerShape
 import com.example.io_motion.core.ui.theme.extendedColors
 import com.example.io_motion.core.ui.theme.scoreColor
 import com.example.io_motion.data.model.SessionRecord
@@ -120,7 +117,6 @@ private fun ReportContent(
 ) {
     val metrics = record.metrics
     val isPlank = metrics.exerciseType == ExerciseType.PLANK
-    val cutCornerEnabled = LocalCutCornerEnabled.current
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -215,8 +211,8 @@ private fun ReportContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                ExportButton("EXPORT CSV", onExportCsv, Modifier.weight(1f), cutCornerEnabled)
-                ExportButton("EXPORT JSON", onExportJson, Modifier.weight(1f), cutCornerEnabled)
+                ExportButton("EXPORT CSV", onExportCsv, Modifier.weight(1f))
+                ExportButton("EXPORT JSON", onExportJson, Modifier.weight(1f))
             }
             Spacer(Modifier.height(40.dp))
         }
@@ -357,14 +353,11 @@ private fun RepRow(
 }
 
 @Composable
-private fun ExportButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, cutCornerEnabled: Boolean = true) {
+private fun ExportButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .height(48.dp)
-            .background(
-                color = MaterialTheme.extendedColors.hairline,
-                shape = cutCornerShape(CutCorner.selectedRow, cutCornerEnabled),
-            )
+            .background(color = MaterialTheme.extendedColors.hairline)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {

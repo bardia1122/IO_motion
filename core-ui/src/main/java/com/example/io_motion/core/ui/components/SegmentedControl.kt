@@ -24,10 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.io_motion.core.ui.theme.CutCorner
 import com.example.io_motion.core.ui.theme.IOMotionTextStyles
-import com.example.io_motion.core.ui.theme.LocalCutCornerEnabled
-import com.example.io_motion.core.ui.theme.cutCornerShape
 import com.example.io_motion.core.ui.theme.extendedColors
 
 /**
@@ -37,9 +34,14 @@ import com.example.io_motion.core.ui.theme.extendedColors
 @Composable
 fun SectionLabel(text: String, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(5.dp).background(MaterialTheme.colorScheme.primary))
+        // 8×8dp solid accent square bullet (design §3).
+        Box(modifier = Modifier.size(8.dp).background(MaterialTheme.colorScheme.primary))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = text, style = IOMotionTextStyles.sectionLabel, color = MaterialTheme.extendedColors.textMuted)
+        Text(
+            text = text.uppercase(),
+            style = IOMotionTextStyles.sectionLabel,
+            color = MaterialTheme.extendedColors.textMuted,
+        )
     }
 }
 
@@ -54,7 +56,6 @@ fun SegmentedControl(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val cutCornerEnabled = LocalCutCornerEnabled.current
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -72,7 +73,7 @@ fun SegmentedControl(
                 .offset(x = indicatorOffset)
                 .width(segmentWidth)
                 .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.primary, cutCornerShape(CutCorner.segmentedIndicator, cutCornerEnabled)),
+                .background(MaterialTheme.colorScheme.primary),
         )
         Row(modifier = Modifier.fillMaxSize()) {
             options.forEachIndexed { index, label ->
